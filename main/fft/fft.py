@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -30,3 +31,9 @@ def generate_spectrogram(
   times = np.arange(num_time_points) * (window_size - overlap) / fs
   frequencies = np.fft.fftfreq(int(window_size), 1 / fs)[: int(window_size / 2)]
   return (frequencies, times, spectrogram)
+
+
+def save_spectrogram(image_size, location, frequencies, times, spectrogram):
+  plt.figure(figsize=(10, 6))  # TODO: Use `image_size` from config
+  plt.pcolormesh(times, frequencies, spectrogram.T, shading="auto")
+  plt.savefig(location)
