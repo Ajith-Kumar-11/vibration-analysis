@@ -1,9 +1,9 @@
-import re
 import os
+import re
 import sys
 import pandas as pd
 from scipy.io import loadmat
-from utility import flatten, find_mat_files
+from utility import find_mat_files, flatten
 
 
 def convert_mat_to_csv(filepath):
