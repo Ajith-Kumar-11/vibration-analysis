@@ -51,4 +51,4 @@ def _generate_location_metadata_faulty(df):
   diameter = cwru.humanize_fault_diameter(df.at[0, "Fault"])
   hp = df.at[0, "HP"]
   rpm = df.at[0, "RPM"]
-  return f"{fault}-{diameter}-{diameter}inch-{hp}hp-{rpm}rpm-"
+  return f"{fault}-{diameter}inch-{hp}hp-{rpm}rpm-"
