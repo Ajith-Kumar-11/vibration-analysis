@@ -75,5 +75,5 @@ def _decode_outerrace_fault(fault_code):
 
 
 def _fatal_error():
-  print("Unexpected fault code in `main/read/dataset/cwru.py`. Terminating program to prevent further errors...")
+  print("[ FATAL ] Unexpected fault code in `main/read/dataset/cwru.py`")
   sys.exit()

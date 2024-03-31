@@ -13,7 +13,7 @@ def convert_mat_to_csv(filepath):
 
   match_hp = re.search(r"(\d+)(hp)", filename)
   if not match_hp:
-    print("Could not match motor HP.\nTerminating program to prevent error...")
+    print("[ FATAL ] Could not match motor HP in `converter/cwru/converter-normal.py`")
     sys.exit()
   metadata_hp = int(match_hp.group(1))
 
@@ -26,7 +26,7 @@ def convert_mat_to_csv(filepath):
     if "RPM" in key:
       match_id = re.search(r"\d+", key)
       if not match_id:
-        print("Could not match column ID.\nTerminating program to prevent error...")
+        print("[ FATAL ] Could not match column ID in `converter/cwru/converter-normal.py`")
         sys.exit()
       id = match_id.group()
 
@@ -42,7 +42,7 @@ def convert_mat_to_csv(filepath):
       id = "099"
       metadata_rpm = 1750
     else:
-      print("Filename does not match any special case files.\nTerminating program to prevent error...")
+      print("[ FATAL ] Filename does not match any special case files in `converter/cwru/converter-normal.py`")
       sys.exit()
 
   # Import columns

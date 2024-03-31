@@ -30,7 +30,7 @@ def generate_spectrograms(dfs: tuple[list, list], bucket_size, image_size, save_
     elif filename.startswith("drive"):
       series = df["DE"]
     else:
-      print("Unexpected fault type in `main/workflow/cwru.py`. Terminating...")
+      print("[ FATAL ] Unexpected fault type in `main/workflow/cwru.py`")
       sys.exit()
     chunks = pre.create_sublists(series, bucket_size)
     for i, chunk in enumerate(chunks):

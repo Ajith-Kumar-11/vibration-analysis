@@ -13,13 +13,13 @@ def convert_mat_to_csv(filepath, metadata_sensor_location):
 
   match_fault = re.search(r"(\d+)(inch)", filename)
   if not match_fault:
-    print("Could not match fault diameter.\nTerminating program to prevent error...")
+    print("[ FATAL ] Could not match fault diameter in `converter/cwru/converter-fault.py`")
     sys.exit()
   metadata_fault = int(match_fault.group(1)) / 1000
 
   match_hp = re.search(r"(\d+)(hp)", filename)
   if not match_hp:
-    print("Could not match motor HP.\nTerminating program to prevent error...")
+    print("[ FATAL ] Could not match motor HP in `converter/cwru/converter-fault.py`")
     sys.exit()
   metadata_hp = int(match_hp.group(1))
 
@@ -32,7 +32,7 @@ def convert_mat_to_csv(filepath, metadata_sensor_location):
     if "RPM" in key:
       match_id = re.search(r"\d+", key)
       if not match_id:
-        print("Could not match column ID.\nTerminating program to prevent error...")
+        print("[ FATAL ] Could not match column ID in `converter/cwru/converter-fault.py`")
         sys.exit()
       id = int(match_id.group())
 
