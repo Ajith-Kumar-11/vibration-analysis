@@ -1,6 +1,7 @@
 import os
 import sys
 import read.csv
+from loguru import logger
 
 
 def read_from_folder(path):
@@ -47,7 +48,8 @@ def _decode_main_fault(fault_code):
     case "D":
       return "drive"
     case _:
-      _fatal_error()
+      logger.error(f"Expected 'F' or 'D', got '{fault_code[0]}'")
+      sys.exit()
 
 
 def _decode_secondary_fault(fault_code):
@@ -59,7 +61,8 @@ def _decode_secondary_fault(fault_code):
     case "B":
       return "ball"
     case _:
-      _fatal_error()
+      logger.error(f"Expected 'I' or 'O' or 'B', got '{fault_code[2]}'")
+      sys.exit()
 
 
 def _decode_outerrace_fault(fault_code):
@@ -71,9 +74,5 @@ def _decode_outerrace_fault(fault_code):
     case "P":
       return "op12"
     case _:
-      _fatal_error()
-
-
-def _fatal_error():
-  print("[ FATAL ] Unexpected fault code in `main/read/dataset/cwru.py`")
-  sys.exit()
+      logger.error(f"Expected '6' or 'R' or 'P', got '{fault_code[6]}'")
+      sys.exit()

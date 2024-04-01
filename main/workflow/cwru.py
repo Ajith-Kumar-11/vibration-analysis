@@ -1,10 +1,10 @@
 import os
 import sys
-import numpy as np
 import fft.fft as fft
+import numpy as np
 import preprocess.preprocess as pre
 import read.dataset.cwru
-
+from loguru import logger
 
 SAMPLING_FREQUENCY = 12000  # TODO: Fetch from config
 
@@ -31,7 +31,7 @@ def generate_spectrograms(dfs: tuple[list, list], bucket_size, image_size, save_
     elif filename.startswith("drive"):
       series = df["DE"]
     else:
-      print("[ FATAL ] Unexpected fault type in `main/workflow/cwru.py`")
+      logger.error(f"Expected 'fan' or 'drive', got '{filename}'")
       sys.exit()
     chunks = pre.create_sublists(series, bucket_size)
     for i, chunk in enumerate(chunks):
