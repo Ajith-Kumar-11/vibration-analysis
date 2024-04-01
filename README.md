@@ -13,5 +13,5 @@ mamba install python=3.12
 mamba install pandas numpy matplotlib scipy
 
 # Add dev dependencies
-mamba install ruff
+mamba install ruff loguru
 ```
