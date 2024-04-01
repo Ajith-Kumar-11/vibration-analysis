@@ -1,9 +1,10 @@
 import os
 import sys
 import numpy as np
-import main.fft.fft as fft
-import main.preprocess.preprocess as pre
-import main.read.dataset.cwru as cwru
+import fft.fft as fft
+import preprocess.preprocess as pre
+import read.dataset.cwru
+
 
 SAMPLING_FREQUENCY = 12000  # TODO: Fetch from config
 
@@ -47,8 +48,8 @@ def _generate_location_metadata_normal(df):
 
 
 def _generate_location_metadata_faulty(df):
-  fault = cwru.decode_fault_type(df.at[0, "Location"])
-  diameter = cwru.humanize_fault_diameter(df.at[0, "Fault"])
+  fault = read.dataset.cwru.decode_fault_type(df.at[0, "Location"])
+  diameter = read.dataset.cwru.humanize_fault_diameter(df.at[0, "Fault"])
   hp = df.at[0, "HP"]
   rpm = df.at[0, "RPM"]
   return f"{fault}-{diameter}inch-{hp}hp-{rpm}rpm-"

@@ -1,9 +1,9 @@
 import os
 import sys
-import main.read.csv
+import read.csv
 
 
-def read(path):
+def read_from_folder(path):
   normal_folders: list[str] = ["12k Normal"]
   faulty_folders: list[str] = ["12k Fan End Bearing Fault", "12k Drive End Bearing Fault"]
 
@@ -13,12 +13,12 @@ def read(path):
 
   for folder in normal_folders:
     folder_path = os.path.join(path, folder)
-    df = main.read.csv.as_list(folder_path)
+    df = read.csv.as_list(folder_path)
     normal_dfs.append(df)
 
   for folder in faulty_folders:
     folder_path = os.path.join(path, folder)
-    df = main.read.csv.as_list(folder_path)
+    df = read.csv.as_list(folder_path)
     faulty_dfs.append(df)
 
   return (normal_dfs, faulty_dfs)
