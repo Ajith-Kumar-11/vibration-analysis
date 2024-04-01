@@ -43,18 +43,22 @@ def humanize_fault_diameter(value):
 
 
 def _decode_main_fault(fault_code):
-  match fault_code[0]:
+  index = 0
+  id = fault_code[index]
+  match id:
     case "F":
       return "fan"
     case "D":
       return "drive"
     case _:
-      logger.error(f"Expected 'F' or 'D', got '{fault_code[0]}'")
+      logger.error(f"Expected 'F' or 'D' at [{index}], got '{id}' from {_format(fault_code, index)}")
       sys.exit()
 
 
 def _decode_secondary_fault(fault_code):
-  match fault_code[2]:
+  index = 2
+  id = fault_code[index]
+  match id:
     case "I":
       return "innerrace"
     case "O":
@@ -62,12 +66,14 @@ def _decode_secondary_fault(fault_code):
     case "B":
       return "ball"
     case _:
-      logger.error(f"Expected 'I' or 'O' or 'B', got '{fault_code[2]}'")
+      logger.error(f"Expected 'I' or 'O' or 'B' at [{index}], got '{id}' from {_format(fault_code, index)}")
       sys.exit()
 
 
 def _decode_outerrace_fault(fault_code):
-  match fault_code[6]:
+  index = 6
+  id = fault_code[index]
+  match id:
     case "6":
       return "c6"
     case "R":
@@ -75,5 +81,10 @@ def _decode_outerrace_fault(fault_code):
     case "P":
       return "op12"
     case _:
-      logger.error(f"Expected '6' or 'R' or 'P', got '{fault_code[6]}'")
+      logger.error(f"Expected '6' or 'R' or 'P' at [{index}], got '{id}' from {_format(fault_code, index)}")
       sys.exit()
+
+
+# Highlight selected index in string | (gamma, 2) => ga[m]ma
+def _format(s: str, index: int) -> str:
+  return f"{s[:index]}[{s[index]}]{s[index + 1:]}"
