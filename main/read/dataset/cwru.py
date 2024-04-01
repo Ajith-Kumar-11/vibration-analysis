@@ -22,6 +22,7 @@ def read_from_folder(path):
     df = read.csv.as_list(folder_path)
     faulty_dfs.append(df)
 
+  logger.info(f"Read {len(normal_dfs)} normal and {len(faulty_dfs)} faulty CSVs from CWRU dataset")
   return (normal_dfs, faulty_dfs)
 
 
