@@ -26,14 +26,7 @@ def generate_spectrograms(dfs: tuple[list, list], config: Config) -> None:
 
   for df in faulty:
     filename = _generate_location_metadata_faulty(df)
-    series = []  # Select FE sensor data for fan fault and DE sensor data for drive end fault
-    if filename.startswith("fan"):
-      series = df["FE"]
-    elif filename.startswith("drive"):
-      series = df["DE"]
-    else:
-      logger.error(f"Expected 'fan' or 'drive', got '{filename}'")
-      sys.exit()
+    series = _select_df_by_fault_location(df, filename)  # Fan fault => df[FE], drive fault => df[DE]
     chunks = pre.create_sublists(series, config.datasets[icwru].bucket_size)
     for i, chunk in enumerate(chunks):
       i_filename = f"{filename}{i}.png"
@@ -54,3 +47,14 @@ def _generate_location_metadata_faulty(df) -> str:
   hp = df.at[0, "HP"]
   rpm = df.at[0, "RPM"]
   return f"{fault}-{diameter}inch-{hp}hp-{rpm}rpm-"
+
+
+# Select FE sensor data for fan fault and DE sensor data for drive end fault
+def _select_df_by_fault_location(df, filename: str):
+  if filename.startswith("fan"):
+    return df["FE"]
+  elif filename.startswith("drive"):
+    return df["DE"]
+  else:
+    logger.error(f"Expected 'fan' or 'drive', got '{filename}'")
+    sys.exit()
