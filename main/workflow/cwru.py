@@ -53,8 +53,9 @@ def _generate_location_metadata_faulty(df) -> str:
 def _select_df_by_fault_location(df, filename: str):
   if filename.startswith("fan"):
     return df["FE"]
-  elif filename.startswith("drive"):
+
+  if filename.startswith("drive"):
     return df["DE"]
-  else:
-    logger.error(f"Expected 'fan' or 'drive', got '{filename}'")
-    sys.exit()
+
+  logger.error(f"Expected 'fan' or 'drive', got '{filename}'")
+  sys.exit()
