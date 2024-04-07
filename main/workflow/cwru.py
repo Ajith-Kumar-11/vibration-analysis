@@ -4,24 +4,25 @@ import fft.fft as fft
 import numpy as np
 import preprocess.preprocess as pre
 import read.dataset.cwru
+from config.config import Config
 from loguru import logger
 
-SAMPLING_FREQUENCY = 12000  # TODO: Fetch from config
 
+def generate_spectrograms(dfs: tuple[list, list], config: Config):
+  icwru = 0  # Hardcoded index of the CWRU dataset in config file
 
-def generate_spectrograms(dfs: tuple[list, list], bucket_size, image_size, save_folder):
   # Unpack as list of DFs
   (normal, faulty) = dfs
 
   for df in normal:
     filename = _generate_location_metadata_normal(df)
     series = np.concatenate((df["FE"], df["DE"]))
-    chunks = pre.create_sublists(series, bucket_size)
+    chunks = pre.create_sublists(series, config.datasets[icwru].bucket_size)
     for i, chunk in enumerate(chunks):
       i_filename = f"{filename}{i}.png"
-      location = os.path.join(save_folder, "normal", i_filename)
-      (frequencies, times, spectrogram) = fft.generate_spectrogram(chunk, SAMPLING_FREQUENCY)
-      fft.save_spectrogram(image_size, location, frequencies, times, spectrogram)
+      location = os.path.join(config.datasets[icwru].fft_path, "normal", i_filename)
+      (frequencies, times, spectrogram) = fft.generate_spectrogram(chunk, config.datasets[icwru].frequency)
+      fft.save(config.spectrogram.width, config.spectrogram.height, location, frequencies, times, spectrogram)
 
   for df in faulty:
     filename = _generate_location_metadata_faulty(df)
@@ -33,12 +34,12 @@ def generate_spectrograms(dfs: tuple[list, list], bucket_size, image_size, save_
     else:
       logger.error(f"Expected 'fan' or 'drive', got '{filename}'")
       sys.exit()
-    chunks = pre.create_sublists(series, bucket_size)
+    chunks = pre.create_sublists(series, config.datasets[icwru].bucket_size)
     for i, chunk in enumerate(chunks):
       i_filename = f"{filename}{i}.png"
-      location = os.path.join(save_folder, "faulty", i_filename)
-      (frequencies, times, spectrogram) = fft.generate_spectrogram(chunk, SAMPLING_FREQUENCY)
-      fft.save_spectrogram(image_size, location, frequencies, times, spectrogram)
+      location = os.path.join(config.datasets[icwru].fft_path, "faulty", i_filename)
+      (frequencies, times, spectrogram) = fft.generate_spectrogram(chunk, config.datasets[icwru].frequency)
+      fft.save(config.spectrogram.width, config.spectrogram.height, location, frequencies, times, spectrogram)
 
 
 def _generate_location_metadata_normal(df):
