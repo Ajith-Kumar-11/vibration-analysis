@@ -8,7 +8,7 @@ from config.config import Config
 from loguru import logger
 
 
-def generate_spectrograms(dfs: tuple[list, list], config: Config):
+def generate_spectrograms(dfs: tuple[list, list], config: Config) -> None:
   icwru = 0  # Hardcoded index of the CWRU dataset in config file
 
   # Unpack as list of DFs
@@ -42,13 +42,13 @@ def generate_spectrograms(dfs: tuple[list, list], config: Config):
       fft.save(config.spectrogram.width, config.spectrogram.height, location, frequencies, times, spectrogram)
 
 
-def _generate_location_metadata_normal(df):
+def _generate_location_metadata_normal(df) -> str:
   hp = df.at[0, "HP"]
   rpm = df.at[0, "RPM"]
   return f"{hp}hp-{rpm}rpm-"
 
 
-def _generate_location_metadata_faulty(df):
+def _generate_location_metadata_faulty(df) -> str:
   fault = read.dataset.cwru.decode_fault_type(df.at[0, "Location"])
   diameter = read.dataset.cwru.humanize_fault_diameter(df.at[0, "Fault"])
   hp = df.at[0, "HP"]
