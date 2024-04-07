@@ -1,5 +1,6 @@
 import json
 from dataclasses import dataclass
+from loguru import logger
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,4 +44,16 @@ def parse(json_path: str = "config/config.json") -> Config:
       )
     )
 
-  return Config(spectrogram, datasets)
+  config = Config(spectrogram, datasets)
+  _log(config)
+  return config
+
+
+def _log(config: Config) -> None:
+  log = []
+  log.append("Read configuration successfully")
+  log.append(config.spectrogram)
+  for dataset in config.datasets:
+    log.append(dataset)
+
+  logger.info("\n".join([str(x) for x in log]))
