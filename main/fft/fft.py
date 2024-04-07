@@ -33,7 +33,7 @@ def generate_spectrogram(
   return (frequencies, times, spectrogram)
 
 
-def save_spectrogram(image_size, location, frequencies, times, spectrogram):
-  plt.figure(figsize=(10, 6))  # TODO: Use `image_size` from config
+def save(width, height, location, frequencies, times, spectrogram):
+  plt.figure(figsize=(width, height))
   plt.pcolormesh(times, frequencies, spectrogram.T, shading="auto")
   plt.savefig(location)
