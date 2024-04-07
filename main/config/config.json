@@ -5,20 +5,20 @@
   },
   "datasets": [
     {
-      "id": 1,
+      "id": 0,
       "name": "Case Western",
       "csv_path": "csv/path/here",
       "fft_path": "spectrogram/path/here",
       "frequency": 12000,
-      "bucket": 3000
+      "bucket_size": 3000
     },
     {
-      "id": 2,
+      "id": 1,
       "name": "Some Other Dataset",
       "csv_path": "csv/other-path/here",
       "fft_path": "other-spectrogram/path/here",
       "frequency": 14000,
-      "bucket": 4000
+      "bucket_size": 4000
     }
   ]
 }
