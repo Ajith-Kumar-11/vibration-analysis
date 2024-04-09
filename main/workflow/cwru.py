@@ -7,13 +7,16 @@ import read.dataset.cwru
 from config.config import Config
 from loguru import logger
 import utility.folder
+import pandas as pd
 
 
-def generate_spectrograms(dfs: tuple[list, list], config: Config) -> None:
+def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], config: Config) -> None:
   icwru = 0  # Hardcoded index of the CWRU dataset in config file
   utility.folder.ensure_folder_exists(config.datasets[icwru].fft_path)
 
   # Unpack as list of DFs
+  normal: list[pd.DataFrame]
+  faulty: list[pd.DataFrame]
   (normal, faulty) = dfs
 
   for df in normal:
@@ -37,13 +40,13 @@ def generate_spectrograms(dfs: tuple[list, list], config: Config) -> None:
       fft.save(config.spectrogram.width, config.spectrogram.height, location, frequencies, times, spectrogram)
 
 
-def _generate_location_metadata_normal(df) -> str:
+def _generate_location_metadata_normal(df: pd.DataFrame) -> str:
   hp = df.at[0, "HP"]
   rpm = df.at[0, "RPM"]
   return f"{hp}hp-{rpm}rpm-"
 
 
-def _generate_location_metadata_faulty(df) -> str:
+def _generate_location_metadata_faulty(df: pd.DataFrame) -> str:
   fault = read.dataset.cwru.decode_fault_type(df.at[0, "Location"])
   diameter = read.dataset.cwru.humanize_fault_diameter(df.at[0, "Fault"])
   hp = df.at[0, "HP"]
@@ -52,7 +55,7 @@ def _generate_location_metadata_faulty(df) -> str:
 
 
 # Select FE sensor data for fan fault and DE sensor data for drive end fault
-def _select_df_by_fault_location(df, filename: str):
+def _select_df_by_fault_location(df: pd.DataFrame, filename: str):
   if filename.startswith("fan"):
     return df["FE"]
 

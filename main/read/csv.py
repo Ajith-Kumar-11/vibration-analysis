@@ -2,8 +2,8 @@ import os
 import pandas as pd
 
 
-def as_list(directory):
-  dfs = []
+def as_list(directory) -> list[pd.DataFrame]:
+  dfs: list[pd.DataFrame] = []
 
   # Iterate over each item in the directory
   for item in os.listdir(directory):
@@ -14,7 +14,7 @@ def as_list(directory):
       dfs.extend(as_list(item_path))
     elif item.endswith(".csv"):
       # If the item is a CSV file, read it into a DataFrame and append to the list
-      df = pd.read_csv(item_path)
+      df: pd.DataFrame = pd.read_csv(item_path)
       dfs.append(df)
 
   return dfs
