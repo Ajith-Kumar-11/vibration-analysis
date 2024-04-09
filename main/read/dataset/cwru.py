@@ -2,9 +2,11 @@ import os
 import sys
 import read.csv
 from loguru import logger
+from config.config import Config
 
 
-def read_from_folder(path):
+def read_from_folder(config: Config):
+  icwru = 0  # Hardcoded index of the CWRU dataset in config file
   normal_folders: list[str] = ["12k Normal"]
   faulty_folders: list[str] = ["12k Fan End Bearing Fault", "12k Drive End Bearing Fault"]
 
@@ -13,12 +15,12 @@ def read_from_folder(path):
   faulty_dfs = []
 
   for folder in normal_folders:
-    folder_path = os.path.join(path, folder)
+    folder_path = os.path.join(config.datasets[icwru].csv_path, folder)
     df = read.csv.as_list(folder_path)
     normal_dfs.append(df)
 
   for folder in faulty_folders:
-    folder_path = os.path.join(path, folder)
+    folder_path = os.path.join(config.datasets[icwru].csv_path, folder)
     df = read.csv.as_list(folder_path)
     faulty_dfs.append(df)
 
