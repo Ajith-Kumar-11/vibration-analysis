@@ -4,4 +4,10 @@ import gan.gan as gan
 import preprocess.preprocess as pre
 import config.config as cfg
 
-config: cfg.Config = cfg.parse()
+
+def main() -> None:
+  config: cfg.Config = cfg.parse()
+
+
+if __name__ == "__main__":
+  main()
