@@ -13,6 +13,8 @@ import pandas as pd
 def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], config: Config) -> None:
   icwru = 0  # Hardcoded index of the CWRU dataset in config file
   utility.folder.ensure_folder_exists(config.datasets[icwru].fft_path)
+
+# TODO: convert normal/faulty strings to variables
   utility.folder.ensure_folder_exists(os.path.join(config.datasets[icwru].fft_path, "normal"))
   utility.folder.ensure_folder_exists(os.path.join(config.datasets[icwru].fft_path, "faulty"))
 
