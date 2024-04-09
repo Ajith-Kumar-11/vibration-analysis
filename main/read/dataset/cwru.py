@@ -1,8 +1,9 @@
 import os
 import sys
+import pandas as pd
 import read.csv
-from loguru import logger
 from config.config import Config
+from loguru import logger
 
 
 def read_from_folder(config: Config):
@@ -11,18 +12,18 @@ def read_from_folder(config: Config):
   faulty_folders: list[str] = ["12k Fan End Bearing Fault", "12k Drive End Bearing Fault"]
 
   # Lists to store CSVs as DFs
-  normal_dfs = []
-  faulty_dfs = []
+  normal_dfs: list[pd.DataFrame] = []
+  faulty_dfs: list[pd.DataFrame] = []
 
   for folder in normal_folders:
     folder_path = os.path.join(config.datasets[icwru].csv_path, folder)
     df = read.csv.as_list(folder_path)
-    normal_dfs.append(df)
+    normal_dfs.extend(df)
 
   for folder in faulty_folders:
     folder_path = os.path.join(config.datasets[icwru].csv_path, folder)
     df = read.csv.as_list(folder_path)
-    faulty_dfs.append(df)
+    faulty_dfs.extend(df)
 
   logger.info(f"Read {len(normal_dfs)} normal and {len(faulty_dfs)} faulty CSVs from CWRU dataset")
   return (normal_dfs, faulty_dfs)
