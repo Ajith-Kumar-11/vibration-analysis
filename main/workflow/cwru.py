@@ -21,7 +21,9 @@ def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], co
   faulty: list[pd.DataFrame]
   (normal, faulty) = dfs
 
-  for df in normal:
+  length_normal: int = len(normal)
+  for idf, df in enumerate(normal):
+    logger.info(f"Working on {idf + 1} of {length_normal} in normal CWRU dataset")
     filename = _generate_location_metadata_normal(df)
     series = np.concatenate((df["FE"], df["DE"]))
     chunks = pre.create_sublists(series, config.datasets[icwru].bucket_size)
@@ -31,7 +33,9 @@ def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], co
       (frequencies, times, spectrogram) = fft.generate_spectrogram(chunk, config.datasets[icwru].frequency)
       fft.save(config.spectrogram.width, config.spectrogram.height, location, frequencies, times, spectrogram)
 
-  for df in faulty:
+  length_faulty: int = len(faulty)
+  for idf, df in enumerate(faulty):
+    logger.info(f"Working on {idf + 1} of {length_faulty} in faulty CWRU dataset")
     filename = _generate_location_metadata_faulty(df)
     series = _select_df_by_fault_location(df, filename)  # Fan fault => df[FE], drive fault => df[DE]
     chunks = pre.create_sublists(series, config.datasets[icwru].bucket_size)
