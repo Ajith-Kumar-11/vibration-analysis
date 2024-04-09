@@ -37,3 +37,4 @@ def save(width, height, location, frequencies, times, spectrogram):
   plt.figure(figsize=(width, height))
   plt.pcolormesh(times, frequencies, spectrogram.T, shading="auto")
   plt.savefig(location)
+  plt.close(plt.gcf())
