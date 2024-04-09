@@ -6,10 +6,12 @@ import preprocess.preprocess as pre
 import read.dataset.cwru
 from config.config import Config
 from loguru import logger
+import utility.folder
 
 
 def generate_spectrograms(dfs: tuple[list, list], config: Config) -> None:
   icwru = 0  # Hardcoded index of the CWRU dataset in config file
+  utility.folder.ensure_folder_exists(config.datasets[icwru].fft_path)
 
   # Unpack as list of DFs
   (normal, faulty) = dfs
