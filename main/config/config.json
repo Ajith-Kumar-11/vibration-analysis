@@ -1,7 +1,7 @@
 {
   "spectrogram": {
-    "width": 10,
-    "height": 6
+    "width": 40,
+    "height": 40
   },
   "datasets": [
     {
