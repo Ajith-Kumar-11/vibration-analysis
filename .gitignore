@@ -160,3 +160,6 @@ cython_debug/
 *.ipynb
 *.mat
 *.csv
+
+# Local config with sensitive/path data which varies between users
+main/config/config_local.json

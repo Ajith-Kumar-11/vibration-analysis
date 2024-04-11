@@ -25,7 +25,7 @@ class Config:
   datasets: list[Dataset]
 
 
-def parse(json_path: str = "config/config.json") -> Config:
+def parse(json_path: str = "config/config_local.json") -> Config:
   with open(json_path, "r") as f:
     json_data = json.load(f)
   spectrogram_data = json_data["spectrogram"]
