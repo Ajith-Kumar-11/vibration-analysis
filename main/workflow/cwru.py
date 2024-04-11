@@ -2,22 +2,21 @@ import os
 import sys
 import fft.fft as fft
 import numpy as np
+import pandas as pd
 import preprocess.preprocess as pre
 import read.dataset.cwru
+import utility.folder
 from config.config import Config
 from loguru import logger
-import utility.folder
-import pandas as pd
 
 
 def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], config: Config) -> None:
   icwru = 0  # Hardcoded index of the CWRU dataset in config file
-  utility.folder.ensure_folder_exists(config.datasets[icwru].fft_path)
-
   # Hardcoded names of output folders
   NORMAL: str = "normal"
   FAULTY: str = "faulty"
 
+  utility.folder.ensure_folder_exists(config.datasets[icwru].fft_path)
   utility.folder.ensure_folder_exists(os.path.join(config.datasets[icwru].fft_path, NORMAL))
   utility.folder.ensure_folder_exists(os.path.join(config.datasets[icwru].fft_path, FAULTY))
 
