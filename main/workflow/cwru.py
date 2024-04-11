@@ -53,16 +53,14 @@ def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], co
 
 def _generate_location_metadata_normal(df: pd.DataFrame) -> str:
   hp = df.at[0, "HP"]
-  rpm = df.at[0, "RPM"]
-  return f"{hp}hp-{rpm}rpm-"
+  return f"{hp}hp-"
 
 
 def _generate_location_metadata_faulty(df: pd.DataFrame) -> str:
   fault = read.dataset.cwru.decode_fault_type(df.at[0, "Location"])
   diameter = read.dataset.cwru.humanize_fault_diameter(df.at[0, "Fault"])
   hp = df.at[0, "HP"]
-  rpm = df.at[0, "RPM"]
-  return f"{fault}-{diameter}inch-{hp}hp-{rpm}rpm-"
+  return f"{fault}-{diameter}inch-{hp}hp-"
 
 
 # Select FE sensor data for fan fault and DE sensor data for drive end fault
