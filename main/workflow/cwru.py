@@ -14,9 +14,12 @@ def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], co
   icwru = 0  # Hardcoded index of the CWRU dataset in config file
   utility.folder.ensure_folder_exists(config.datasets[icwru].fft_path)
 
-# TODO: convert normal/faulty strings to variables
-  utility.folder.ensure_folder_exists(os.path.join(config.datasets[icwru].fft_path, "normal"))
-  utility.folder.ensure_folder_exists(os.path.join(config.datasets[icwru].fft_path, "faulty"))
+  # Hardcoded names of output folders
+  NORMAL: str = "normal"
+  FAULTY: str = "faulty"
+
+  utility.folder.ensure_folder_exists(os.path.join(config.datasets[icwru].fft_path, NORMAL))
+  utility.folder.ensure_folder_exists(os.path.join(config.datasets[icwru].fft_path, FAULTY))
 
   # Unpack as list of DFs
   normal: list[pd.DataFrame]
@@ -31,7 +34,7 @@ def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], co
     chunks = pre.create_sublists(series, config.datasets[icwru].bucket_size)
     for i, chunk in enumerate(chunks):
       i_filename = f"{filename}{i}.png"
-      location = os.path.join(config.datasets[icwru].fft_path, "normal", i_filename)
+      location = os.path.join(config.datasets[icwru].fft_path, NORMAL, i_filename)
       (frequencies, times, spectrogram) = fft.generate_spectrogram(chunk, config.datasets[icwru].frequency)
       fft.save(config.spectrogram.width, config.spectrogram.height, location, frequencies, times, spectrogram)
 
@@ -43,7 +46,7 @@ def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], co
     chunks = pre.create_sublists(series, config.datasets[icwru].bucket_size)
     for i, chunk in enumerate(chunks):
       i_filename = f"{filename}{i}.png"
-      location = os.path.join(config.datasets[icwru].fft_path, "faulty", i_filename)
+      location = os.path.join(config.datasets[icwru].fft_path, FAULTY, i_filename)
       (frequencies, times, spectrogram) = fft.generate_spectrogram(chunk, config.datasets[icwru].frequency)
       fft.save(config.spectrogram.width, config.spectrogram.height, location, frequencies, times, spectrogram)
 
