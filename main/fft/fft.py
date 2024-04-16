@@ -38,5 +38,5 @@ def save(width, height, location, frequencies, times, spectrogram):
   plt.subplots_adjust(0, 0, 1, 1)
   plt.pcolormesh(times, frequencies, spectrogram.T, shading="auto")
   plt.axis("off")
-  plt.savefig(location)
+  plt.savefig(location, dpi=1)
   plt.close(plt.gcf())
