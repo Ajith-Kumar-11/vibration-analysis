@@ -35,7 +35,8 @@ def generate_spectrogram(
 
 def save(width, height, location, frequencies, times, spectrogram):
   plt.figure(figsize=(width, height))
+  plt.subplots_adjust(0, 0, 1, 1)
   plt.pcolormesh(times, frequencies, spectrogram.T, shading="auto")
   plt.axis("off")
-  plt.savefig(location, bbox_inches="tight", pad_inches=0)
+  plt.savefig(location)
   plt.close(plt.gcf())
