@@ -10,7 +10,7 @@ mamba activate vibration
 mamba install python=3.12
 
 # Add dependencies
-mamba install pandas numpy matplotlib scipy
+mamba install numpy matplotlib
 
 # Add dev dependencies
 mamba install ruff loguru
