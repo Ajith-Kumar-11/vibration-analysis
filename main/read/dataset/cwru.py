@@ -1,6 +1,6 @@
 import os
 import sys
-import pandas as pd
+import polars as pl
 import read.csv
 from config.config import Config
 from loguru import logger
@@ -12,8 +12,8 @@ def read_from_folder(config: Config):
   faulty_folders: list[str] = ["12k Fan End Bearing Fault", "12k Drive End Bearing Fault"]
 
   # Lists to store CSVs as DFs
-  normal_dfs: list[pd.DataFrame] = []
-  faulty_dfs: list[pd.DataFrame] = []
+  normal_dfs: list[pl.DataFrame] = []
+  faulty_dfs: list[pl.DataFrame] = []
 
   for folder in normal_folders:
     folder_path = os.path.join(config.datasets[icwru].csv_path, folder)

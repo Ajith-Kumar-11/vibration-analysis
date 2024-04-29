@@ -2,7 +2,7 @@ import os
 import sys
 import fft.fft as fft
 import numpy as np
-import pandas as pd
+import polars as pl
 import preprocess.preprocess as pre
 import read.dataset.cwru
 import utility.folder
@@ -10,7 +10,7 @@ from config.config import Config
 from loguru import logger
 
 
-def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], config: Config) -> None:
+def generate_spectrograms(dfs: tuple[list[pl.DataFrame], list[pl.DataFrame]], config: Config) -> None:
   icwru = 0  # Hardcoded index of the CWRU dataset in config file
   # Hardcoded names of output folders
   NORMAL: str = "normal"
@@ -21,8 +21,8 @@ def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], co
   utility.folder.ensure_folder_exists(os.path.join(config.datasets[icwru].fft_path, FAULTY))
 
   # Unpack as list of DFs
-  normal: list[pd.DataFrame]
-  faulty: list[pd.DataFrame]
+  normal: list[pl.DataFrame]
+  faulty: list[pl.DataFrame]
   (normal, faulty) = dfs
 
   length_normal: int = len(normal)
@@ -50,20 +50,20 @@ def generate_spectrograms(dfs: tuple[list[pd.DataFrame], list[pd.DataFrame]], co
       fft.save(config.spectrogram.width, config.spectrogram.height, location, frequencies, times, spectrogram)
 
 
-def _generate_location_metadata_normal(df: pd.DataFrame) -> str:
-  hp = df.at[0, "HP"]
+def _generate_location_metadata_normal(df: pl.DataFrame) -> str:
+  hp = df["HP"][0]
   return f"{hp}hp-"
 
 
-def _generate_location_metadata_faulty(df: pd.DataFrame) -> str:
-  fault = read.dataset.cwru.decode_fault_type(df.at[0, "Location"])
-  diameter = read.dataset.cwru.humanize_fault_diameter(df.at[0, "Fault"])
-  hp = df.at[0, "HP"]
+def _generate_location_metadata_faulty(df: pl.DataFrame) -> str:
+  fault = read.dataset.cwru.decode_fault_type(df["Location"][0])
+  diameter = read.dataset.cwru.humanize_fault_diameter(df["Fault"][0])
+  hp = df["HP"][0]
   return f"{fault}-{diameter}inch-{hp}hp-"
 
 
 # Select FE sensor data for fan fault and DE sensor data for drive end fault
-def _select_df_by_fault_location(df: pd.DataFrame, filename: str):
+def _select_df_by_fault_location(df: pl.DataFrame, filename: str):
   if filename.startswith("fan"):
     return df["FE"]
 
