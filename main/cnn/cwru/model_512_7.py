@@ -47,3 +47,19 @@ def run(config: Config) -> None:
   if len(classes) != NUM_CLASSES:
     logger.error(f"Expected {NUM_CLASSES} categories, got {len(classes)}")
     sys.exit()
+
+  # CNN model
+  class ConvNet(nn.Module):
+    # CNN network
+    def __init__(self, num_classes=NUM_CLASSES):
+      super(ConvNet, self).__init__()
+      # TODO
+      pass
+
+    # Feed forward network
+    def forward(self, input):
+      # TODO
+      output = None
+      # output=output.view(-1,dim*dim*dim)
+      output = self.fc(output)
+      return output
