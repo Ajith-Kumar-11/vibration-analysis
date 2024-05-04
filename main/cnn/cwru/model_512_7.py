@@ -39,7 +39,7 @@ def run(config: Config) -> None:
 
   # Log categories
   classes: list[str] = sorted([j.name.split("/")[-1] for j in pathlib.Path(train_path).iterdir()])
-  logger.info(f"Found {len(classes)} categories: {classes}")
+  logger.info(f"Found {len(classes)} categories in CWRU FFT dataset: {classes}")
   if len(classes) != 7:
     logger.error(f"Expected 7 categories, got {len(classes)}")
     sys.exit()
