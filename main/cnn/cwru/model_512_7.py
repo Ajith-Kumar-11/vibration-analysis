@@ -18,6 +18,8 @@ from torchvision.transforms import transforms
 
 # Hyperparameters
 NUM_CLASSES: int = 7  # Not read from config because of op12 and or3 subsets
+LEARNING_RATE: float = 0.001
+WEIGHT_DECAY: float = 0.0001
 
 
 def run(config: Config) -> None:
@@ -63,3 +65,8 @@ def run(config: Config) -> None:
       # output=output.view(-1,dim*dim*dim)
       output = self.fc(output)
       return output
+
+  # Initialize
+  model = ConvNet(num_classes=NUM_CLASSES).to(device)
+  optimizer = Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+  loss_function = nn.CrossEntropyLoss()
