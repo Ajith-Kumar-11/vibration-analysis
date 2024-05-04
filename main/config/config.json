@@ -9,6 +9,7 @@
       "name": "Case Western",
       "csv_path": "csv/path/here",
       "fft_path": "spectrogram/path/here",
+      "fft_split_path": "spectrogram/train-val-test/path/here",
       "frequency": 12000,
       "bucket_size": 3000
     },
@@ -17,6 +18,7 @@
       "name": "Some Other Dataset",
       "csv_path": "csv/other-path/here",
       "fft_path": "other-spectrogram/path/here",
+      "fft_split_path": "spectrogram/train-val-test/path/here",
       "frequency": 14000,
       "bucket_size": 4000
     }
