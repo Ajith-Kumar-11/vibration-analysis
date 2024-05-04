@@ -5,8 +5,11 @@ import workflow.cwru
 
 def main() -> None:
   config: cfg.Config = cfg.parse()
-  cwru_dfs = read.dataset.cwru.read_from_folder(config)
-  workflow.cwru.generate_spectrograms(cwru_dfs, config)
+
+  # Generate spectrograms from CWRU dataset
+  if False:
+    cwru_dfs = read.dataset.cwru.read_from_folder(config)
+    workflow.cwru.generate_spectrograms(cwru_dfs, config)
 
 
 if __name__ == "__main__":
