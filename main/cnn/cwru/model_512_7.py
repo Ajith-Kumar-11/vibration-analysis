@@ -3,6 +3,7 @@
 import glob
 import os
 import pathlib
+import sys
 import numpy as np
 import torch
 import torch.nn as nn
@@ -28,3 +29,17 @@ def run(config: Config) -> None:
       transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]),  # Scale tensor values from [0, 1] to [-1, 1]
     ]
   )
+
+  # Load datasets
+  i_cwru: int = 0  # Hardcoded index of CWRU dataset in config
+  train_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, "train")
+  test_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, "test")
+  train = DataLoader(torchvision.datasets.ImageFolder(train_path, transform=transformer), batch_size=64, shuffle=True)
+  test = DataLoader(torchvision.datasets.ImageFolder(test_path, transform=transformer), batch_size=32, shuffle=True)
+
+  # Log categories
+  classes: list[str] = sorted([j.name.split("/")[-1] for j in pathlib.Path(train_path).iterdir()])
+  logger.info(f"Found {len(classes)} categories: {classes}")
+  if len(classes) != 7:
+    logger.error(f"Expected 7 categories, got {len(classes)}")
+    sys.exit()
