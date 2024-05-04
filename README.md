@@ -14,6 +14,12 @@ mamba install numpy matplotlib polars
 
 # Add dev dependencies
 mamba install ruff loguru
+
+# Install PyTorch (if you have NVIDIA GPU)
+conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
+
+# Install PyTorch (for CPU; if you *don't* have NVIDIA GPU)
+conda install pytorch torchvision torchaudio cpuonly -c pytorch
 ```
 
 ## Notes
