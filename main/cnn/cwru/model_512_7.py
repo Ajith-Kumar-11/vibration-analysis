@@ -20,6 +20,7 @@ from torchvision.transforms import transforms
 NUM_CLASSES: int = 7  # Not read from config because of op12 and or3 subsets
 LEARNING_RATE: float = 0.001
 WEIGHT_DECAY: float = 0.0001
+NUM_EPOCHS: int = 100
 
 
 def run(config: Config) -> None:
@@ -67,6 +68,52 @@ def run(config: Config) -> None:
       return output
 
   # Initialize
-  model = ConvNet(num_classes=NUM_CLASSES).to(device)
+  model: ConvNet = ConvNet(num_classes=NUM_CLASSES).to(device)
   optimizer = Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
   loss_function = nn.CrossEntropyLoss()
+
+  train_count = len(glob.glob(train_path + "/**/*.png"))
+  test_count = len(glob.glob(test_path + "/**/*.png"))
+
+  best_accuracy = 0.0
+
+  for epoch in range(NUM_EPOCHS):
+    model.train()
+    train_accuracy: float = 0.0  # Reset
+    train_loss: float = 0.0  # Reset
+
+    # Training
+    for i, (images, labels) in enumerate(train):
+      if torch.cuda.is_available():
+        images = Variable(images.cuda())
+        labels = Variable(labels.cuda())
+      optimizer.zero_grad()
+      outputs = model(images)
+      loss = loss_function(outputs, labels)
+      loss.backward()
+      optimizer.step()
+      train_loss += loss.cpu().data * images.size(0)
+      _, prediction = torch.max(outputs.data, 1)
+      train_accuracy += int(torch.sum(prediction == labels.data))
+
+    train_accuracy: float = train_accuracy / train_count
+    train_loss: float = train_loss / train_count
+
+    # Testing
+    model.eval()
+    test_accuracy: float = 0.0
+    for i, (images, labels) in enumerate(test):
+      if torch.cuda.is_available():
+        images = Variable(images.cuda())
+        labels = Variable(labels.cuda())
+      outputs = model(images)
+      _, prediction = torch.max(outputs.data, 1)
+      test_accuracy += int(torch.sum(prediction == labels.data))
+
+    test_accuracy: float = test_accuracy / test_count
+    logger.info(f"Epoch: {epoch} Train Loss: {train_loss} Train: {train_accuracy}% Test: {test_accuracy}%")
+
+    # Save/update the best model
+    if test_accuracy > best_accuracy:
+      torch.save(model.state_dict(), "best_checkpoint.model")  # TODO: Get path from config or set output folder
+      best_accuracy = test_accuracy
