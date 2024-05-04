@@ -16,6 +16,10 @@ from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 
 
+# Hyperparameters
+NUM_CLASSES: int = 7  # Not read from config because of op12 and or3 subsets
+
+
 def run(config: Config) -> None:
   # Prefer CUDA capable GPU if available
   device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -40,6 +44,6 @@ def run(config: Config) -> None:
   # Log categories
   classes: list[str] = sorted([j.name.split("/")[-1] for j in pathlib.Path(train_path).iterdir()])
   logger.info(f"Found {len(classes)} categories in CWRU FFT dataset: {classes}")
-  if len(classes) != 7:
-    logger.error(f"Expected 7 categories, got {len(classes)}")
+  if len(classes) != NUM_CLASSES:
+    logger.error(f"Expected {NUM_CLASSES} categories, got {len(classes)}")
     sys.exit()
