@@ -1,6 +1,5 @@
 # 512x512 px images, 7 classes
 
-import glob
 import os
 import pathlib
 import sys
@@ -14,7 +13,7 @@ from torch.autograd import Variable
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
-
+from utility.file import count_files_with_extension
 
 # Hyperparameters
 NUM_CLASSES: int = 7  # Not read from config because of op12 and or3 subsets
@@ -43,6 +42,9 @@ def run(config: Config) -> None:
   test_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, "test")
   train = DataLoader(torchvision.datasets.ImageFolder(train_path, transform=transformer), batch_size=64, shuffle=True)
   test = DataLoader(torchvision.datasets.ImageFolder(test_path, transform=transformer), batch_size=32, shuffle=True)
+  train_count: int = count_files_with_extension(train_path, "png")
+  test_count: int = count_files_with_extension(test_path, "png")
+  logger.info(f"Loaded {train_count} images for training and {test_count} images for testing from CWRU FFT dataset")
 
   # Log categories
   classes: list[str] = sorted([j.name.split("/")[-1] for j in pathlib.Path(train_path).iterdir()])
@@ -71,9 +73,6 @@ def run(config: Config) -> None:
   model: ConvNet = ConvNet(num_classes=NUM_CLASSES).to(device)
   optimizer = Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
   loss_function = nn.CrossEntropyLoss()
-
-  train_count = len(glob.glob(train_path + "/**/*.png"))
-  test_count = len(glob.glob(test_path + "/**/*.png"))
 
   best_accuracy = 0.0
 
