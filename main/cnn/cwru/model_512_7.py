@@ -3,7 +3,6 @@
 import os
 import pathlib
 import sys
-import numpy as np
 import torch
 import torch.nn as nn
 import torchvision
@@ -17,10 +16,10 @@ from utility.file import count_files_with_extension
 
 # Hyperparameters
 NUM_CLASSES: int = 7  # Not read from config because of op12 and or3 subsets
-BATCH_SIZE: int = 64
+BATCH_SIZE: int = 1
 LEARNING_RATE: float = 0.001
 WEIGHT_DECAY: float = 0.0001
-NUM_EPOCHS: int = 100
+NUM_EPOCHS: int = 10
 
 
 def run(config: Config) -> None:
@@ -113,12 +112,14 @@ def run(config: Config) -> None:
 
   # Initialize
   model: ConvNet = ConvNet(num_classes=NUM_CLASSES).to(device)
+  logger.info("Initialized CNN model")
   optimizer = Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
   loss_function = nn.CrossEntropyLoss()
 
   best_accuracy = 0.0
 
   for epoch in range(NUM_EPOCHS):
+    logger.info(f"Working on epoch {epoch + 1} of {NUM_EPOCHS}")
     model.train()
     train_accuracy: float = 0.0  # Reset
     train_loss: float = 0.0  # Reset
@@ -152,7 +153,7 @@ def run(config: Config) -> None:
       test_accuracy += int(torch.sum(prediction == labels.data))
 
     test_accuracy: float = test_accuracy / test_count
-    logger.info(f"Epoch: {epoch} Train Loss: {train_loss} Train: {train_accuracy}% Test: {test_accuracy}%")
+    logger.info(f"Train Loss: {train_loss} Train: {train_accuracy}% Test: {test_accuracy}%")
 
     # Save/update the best model
     if test_accuracy > best_accuracy:
