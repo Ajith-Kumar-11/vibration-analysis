@@ -17,6 +17,7 @@ from utility.file import count_files_with_extension
 
 # Hyperparameters
 NUM_CLASSES: int = 7  # Not read from config because of op12 and or3 subsets
+BATCH_SIZE: int = 64
 LEARNING_RATE: float = 0.001
 WEIGHT_DECAY: float = 0.0001
 NUM_EPOCHS: int = 100
@@ -40,8 +41,12 @@ def run(config: Config) -> None:
   i_cwru: int = 0  # Hardcoded index of CWRU dataset in config
   train_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, "train")
   test_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, "test")
-  train = DataLoader(torchvision.datasets.ImageFolder(train_path, transform=transformer), batch_size=64, shuffle=True)
-  test = DataLoader(torchvision.datasets.ImageFolder(test_path, transform=transformer), batch_size=32, shuffle=True)
+  train = DataLoader(
+    torchvision.datasets.ImageFolder(train_path, transform=transformer), batch_size=BATCH_SIZE, shuffle=True
+  )
+  test = DataLoader(
+    torchvision.datasets.ImageFolder(test_path, transform=transformer), batch_size=BATCH_SIZE, shuffle=True
+  )
   train_count: int = count_files_with_extension(train_path, "png")
   test_count: int = count_files_with_extension(test_path, "png")
   logger.info(f"Loaded {train_count} images for training and {test_count} images for testing from CWRU FFT dataset")
