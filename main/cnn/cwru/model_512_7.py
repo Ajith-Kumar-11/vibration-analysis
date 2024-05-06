@@ -41,10 +41,10 @@ def run(config: Config) -> None:
   i_cwru: int = 0  # Hardcoded index of CWRU dataset in config
   train_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, "train")
   test_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, "test")
-  train = DataLoader(
+  train_data_loader = DataLoader(
     torchvision.datasets.ImageFolder(train_path, transform=transformer), batch_size=BATCH_SIZE, shuffle=True
   )
-  test = DataLoader(
+  test_data_loader = DataLoader(
     torchvision.datasets.ImageFolder(test_path, transform=transformer), batch_size=BATCH_SIZE, shuffle=True
   )
   train_count: int = count_files_with_extension(train_path, "png")
@@ -87,7 +87,7 @@ def run(config: Config) -> None:
     train_loss: float = 0.0  # Reset
 
     # Training
-    for i, (images, labels) in enumerate(train):
+    for i, (images, labels) in enumerate(train_data_loader):
       if torch.cuda.is_available():
         images = Variable(images.cuda())
         labels = Variable(labels.cuda())
@@ -106,7 +106,7 @@ def run(config: Config) -> None:
     # Testing
     model.eval()
     test_accuracy: float = 0.0
-    for i, (images, labels) in enumerate(test):
+    for i, (images, labels) in enumerate(test_data_loader):
       if torch.cuda.is_available():
         images = Variable(images.cuda())
         labels = Variable(labels.cuda())
