@@ -63,14 +63,51 @@ def run(config: Config) -> None:
     # CNN network
     def __init__(self, num_classes=NUM_CLASSES):
       super(ConvNet, self).__init__()
-      # TODO
-      pass
+      # (BatchSize, 3, 512, 512) -> (BatchSize, 16, 512, 512)
+      self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)
+      self.bn1 = nn.BatchNorm2d(num_features=16)
+      self.relu1 = nn.ReLU()
+
+      # (BatchSize, 16, 512, 512) -> (BatchSize, 16, 256, 256)
+      self.pool1 = nn.MaxPool2d(kernel_size=2)
+
+      # (BatchSize, 16, 256, 256) -> (BatchSize, 32, 256, 256)
+      self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1)
+      self.bn2 = nn.BatchNorm2d(num_features=32)
+      self.relu2 = nn.ReLU()
+
+      # (BatchSize, 32, 256, 256) -> (BatchSize, 32, 128, 128)
+      self.pool2 = nn.MaxPool2d(kernel_size=2)
+
+      # (BatchSize, 32, 128, 128) -> (BatchSize, 64, 128, 128)
+      self.conv3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=1)
+      self.bn3 = nn.BatchNorm2d(num_features=64)
+      self.relu3 = nn.ReLU()
+
+      # (BatchSize, 64, 128, 128) -> (BatchSize, 64, 64, 64)
+      self.pool3 = nn.MaxPool2d(kernel_size=2)
+
+      # Fully connected layer
+      self.fc = nn.Linear(in_features=64 * 64 * 64, out_features=num_classes)
 
     # Feed forward network
     def forward(self, input):
-      # TODO
-      output = None
-      # output=output.view(-1,dim*dim*dim)
+      output = self.conv1(input)
+      output = self.bn1(output)
+      output = self.relu1(output)
+      output = self.pool1(output)
+
+      output = self.conv2(output)
+      output = self.bn2(output)
+      output = self.relu2(output)
+      output = self.pool2(output)
+
+      output = self.conv3(output)
+      output = self.bn3(output)
+      output = self.relu3(output)
+      output = self.pool3(output)
+
+      output = output.view(-1, 64 * 64 * 64)  # Flatten
       output = self.fc(output)
       return output
 
