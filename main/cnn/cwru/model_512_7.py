@@ -13,6 +13,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 from utility.file import count_files_with_extension
+from utility.folder import ensure_folder_exists
 
 # Hyperparameters
 NUM_CLASSES: int = 7  # Not read from config because of op12 and or3 subsets
@@ -21,9 +22,13 @@ LEARNING_RATE: float = 0.001
 WEIGHT_DECAY: float = 0.0001
 NUM_EPOCHS: int = 10
 SUBFOLDER: str = "7-Normal-Faulty"  # Hardcoded directory name containing 7 classes
+OUTPUT_FOLDER: str = "output/model/512_7"
 
 
 def run(config: Config) -> None:
+  # Generate folder to save model
+  ensure_folder_exists(OUTPUT_FOLDER)
+
   # Prefer CUDA capable GPU if available
   device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
   logger.info(f"PyTorch device: {device}")
@@ -158,5 +163,5 @@ def run(config: Config) -> None:
 
     # Save/update the best model
     if test_accuracy > best_accuracy:
-      torch.save(model.state_dict(), "best_checkpoint.model")  # TODO: Get path from config or set output folder
+      torch.save(model.state_dict(), os.path.join(OUTPUT_FOLDER, "checkpoint.model"))
       best_accuracy = test_accuracy
