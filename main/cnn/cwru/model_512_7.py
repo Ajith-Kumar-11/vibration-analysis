@@ -1,4 +1,5 @@
 # 512x512 px images, 7 classes
+# 1 Normal baseline, 6 fault classes (ball, inner, outer_c6)*(fan, drive)
 
 import os
 import pathlib
