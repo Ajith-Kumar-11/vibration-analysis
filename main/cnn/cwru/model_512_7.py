@@ -55,11 +55,11 @@ def run(config: Config) -> None:
   )
   train_count: int = count_files_with_extension(train_path, "png")
   test_count: int = count_files_with_extension(test_path, "png")
-  logger.info(f"Loaded {train_count} images for training and {test_count} images for testing from CWRU FFT dataset")
+  logger.info(f"Loaded {train_count} images for training and {test_count} images for testing from {SUBFOLDER} dataset")
 
   # Log categories
   classes: list[str] = sorted([j.name.split("/")[-1] for j in pathlib.Path(train_path).iterdir()])
-  logger.info(f"Found {len(classes)} categories in CWRU FFT dataset: {classes}")
+  logger.info(f"Found {len(classes)} categories in {SUBFOLDER} dataset: {classes}")
   if len(classes) != NUM_CLASSES:
     logger.error(f"Expected {NUM_CLASSES} categories, got {len(classes)}")
     sys.exit()
@@ -119,7 +119,7 @@ def run(config: Config) -> None:
 
   # Initialize
   model: ConvNet = ConvNet(num_classes=NUM_CLASSES).to(device)
-  logger.info("Initialized CNN model")
+  logger.info(f"Initialized {SUBFOLDER} CNN model")
   optimizer = Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
   loss_function = nn.CrossEntropyLoss()
 
