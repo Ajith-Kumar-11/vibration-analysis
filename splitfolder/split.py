@@ -1,7 +1,7 @@
 import splitfolders
 
 
-ratio: tuple[float, float, float] = (0.8, 0.1, 0.1)  # (train, val, test)
+ratio: tuple[float, float, float] = (0.5, 0.0, 0.5)  # (train, val, test)
 input_path: str = "input/path/here"
 output_path: str = "input/path/here"
 seed: int = 1337
