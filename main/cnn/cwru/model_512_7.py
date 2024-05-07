@@ -27,6 +27,8 @@ OUTPUT_FOLDER: str = f"output/model/512_{NUM_CLASSES}"
 
 
 def run(config: Config) -> None:
+  print("\nWorking on 512x512 px images, 7 classes")
+
   # Generate folder to save model
   ensure_folder_exists(OUTPUT_FOLDER)
 
