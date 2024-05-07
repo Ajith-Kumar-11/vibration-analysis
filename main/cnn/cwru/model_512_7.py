@@ -22,8 +22,8 @@ BATCH_SIZE: int = 1
 LEARNING_RATE: float = 0.001
 WEIGHT_DECAY: float = 0.0001
 NUM_EPOCHS: int = 10
-SUBFOLDER: str = "512_7"  # Hardcoded directory name containing 7 classes
-OUTPUT_FOLDER: str = "output/model/512_7"
+SUBFOLDER: str = f"512_{NUM_CLASSES}"  # Hardcoded directory name containing 7 classes
+OUTPUT_FOLDER: str = f"output/model/512_{NUM_CLASSES}"
 
 
 def run(config: Config) -> None:
