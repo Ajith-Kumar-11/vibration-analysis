@@ -20,6 +20,7 @@ BATCH_SIZE: int = 1
 LEARNING_RATE: float = 0.001
 WEIGHT_DECAY: float = 0.0001
 NUM_EPOCHS: int = 10
+SUBFOLDER: str = "7-Normal-Faulty"  # Hardcoded directory name containing 7 classes
 
 
 def run(config: Config) -> None:
@@ -38,8 +39,8 @@ def run(config: Config) -> None:
 
   # Load datasets
   i_cwru: int = 0  # Hardcoded index of CWRU dataset in config
-  train_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, "train")
-  test_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, "test")
+  train_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, SUBFOLDER, "train")
+  test_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, SUBFOLDER, "test")
   train_data_loader = DataLoader(
     torchvision.datasets.ImageFolder(train_path, transform=transformer), batch_size=BATCH_SIZE, shuffle=True
   )
