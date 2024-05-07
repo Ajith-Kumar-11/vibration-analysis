@@ -160,7 +160,7 @@ def run(config: Config) -> None:
       test_accuracy += int(torch.sum(prediction == labels.data))
 
     test_accuracy: float = test_accuracy / test_count
-    logger.info(f"Train Loss: {train_loss} Train: {train_accuracy}% Test: {test_accuracy}%")
+    logger.info(f"Train Loss: {train_loss} Train: {train_accuracy * 100}% Test: {test_accuracy * 100}%")
 
     # Save/update the best model
     if test_accuracy > best_accuracy:
