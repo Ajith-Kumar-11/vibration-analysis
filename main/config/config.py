@@ -15,7 +15,7 @@ class Dataset:
   name: str
   csv_path: str
   fft_path: str
-  fft_split_path: str
+  fft_classes: str
   frequency: int
   bucket_size: int
 
@@ -40,7 +40,7 @@ def parse(json_path: str = "config/config_local.json") -> Config:
         name=dataset["name"],
         csv_path=dataset["csv_path"],
         fft_path=dataset["fft_path"],
-        fft_split_path=dataset["fft_split_path"],
+        fft_classes=dataset["fft_classes"],
         frequency=dataset["frequency"],
         bucket_size=dataset["bucket_size"],
       )
