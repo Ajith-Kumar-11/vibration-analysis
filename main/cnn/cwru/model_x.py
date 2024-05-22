@@ -12,7 +12,7 @@ from torchvision.transforms import transforms
 from utility.folder import ensure_folder_exists
 
 # Hyperparameters
-BATCH_SIZE: int = 1  # WARNING: Do not change this value, !=1 is incompatible with the current accuracy calculation
+BATCH_SIZE: int = 1
 LEARNING_RATE: float = 0.0001
 WEIGHT_DECAY: float = 0.0001
 NUM_EPOCHS: int = 10
@@ -159,7 +159,9 @@ def run(config: Config, num_classes: int, subfolder: str) -> None:
       test_accuracy += int(torch.sum(prediction == labels.data))
 
     test_accuracy: float = test_accuracy / test_count
-    logger.info(f"Train Loss: {train_loss} Train: {train_accuracy * 100}% Test: {test_accuracy * 100}%")
+    logger.info(
+      f"Train Loss: {train_loss} Train: {train_accuracy * 100 / BATCH_SIZE}% Test: {test_accuracy * 100 / BATCH_SIZE}%"
+    )
 
     # Save/update the best model
     if test_accuracy > best_accuracy:
