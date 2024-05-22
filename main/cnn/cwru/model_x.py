@@ -1,23 +1,22 @@
 import os
-import pathlib
 import sys
 import torch
 import torch.nn as nn
-import torchvision
 from config.config import Config
 from loguru import logger
 from torch.autograd import Variable
 from torch.optim import Adam
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
+from torchvision import datasets
 from torchvision.transforms import transforms
-from utility.file import count_files_with_extension
 from utility.folder import ensure_folder_exists
 
 # Hyperparameters
-BATCH_SIZE: int = 1
+BATCH_SIZE: int = 1  # WARNING: Do not change this value, !=1 is incompatible with the current accuracy calculation
 LEARNING_RATE: float = 0.0001
 WEIGHT_DECAY: float = 0.0001
-NUM_EPOCHS: int = 10
+NUM_EPOCHS: int = 1
+SPLIT_RATIO: float = 0.5  # Train-test split
 
 
 def run(config: Config, num_classes: int, subfolder: str) -> None:
@@ -40,22 +39,25 @@ def run(config: Config, num_classes: int, subfolder: str) -> None:
     ]
   )
 
-  # Load datasets
+  # Load dataset
   i_cwru: int = 0  # Hardcoded index of CWRU dataset in config
-  train_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, subfolder, "train")
-  test_path: str = os.path.join(config.datasets[i_cwru].fft_split_path, subfolder, "test")
-  train_data_loader = DataLoader(
-    torchvision.datasets.ImageFolder(train_path, transform=transformer), batch_size=BATCH_SIZE, shuffle=True
-  )
-  test_data_loader = DataLoader(
-    torchvision.datasets.ImageFolder(test_path, transform=transformer), batch_size=BATCH_SIZE, shuffle=True
-  )
-  train_count: int = count_files_with_extension(train_path, "png")
-  test_count: int = count_files_with_extension(test_path, "png")
+  fft_classes_directory: str = os.path.join(config.datasets[i_cwru].fft_classes, subfolder)
+  dataset = datasets.ImageFolder(root=fft_classes_directory, transform=transformer)
+
+  # Split dataset
+  train_size = int(0.5 * len(dataset))
+  test_size = len(dataset) - train_size
+  train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+  train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+  test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
+
+  # Count images
+  train_count: int = len(train_loader)
+  test_count: int = len(test_loader)
   logger.info(f"Loaded {train_count} images for training and {test_count} images for testing from {subfolder} dataset")
 
   # Log categories
-  classes: list[str] = sorted([j.name.split("/")[-1] for j in pathlib.Path(train_path).iterdir()])
+  classes: list[str] = sorted(dataset.classes)
   logger.info(f"Found {len(classes)} categories in {subfolder} dataset: {classes}")
   if len(classes) != num_classes:
     logger.error(f"Expected {num_classes} categories, got {len(classes)}")
@@ -129,7 +131,7 @@ def run(config: Config, num_classes: int, subfolder: str) -> None:
     train_loss: float = 0.0  # Reset
 
     # Training
-    for i, (images, labels) in enumerate(train_data_loader):
+    for i, (images, labels) in enumerate(train_loader):
       if torch.cuda.is_available():
         images = Variable(images.cuda())
         labels = Variable(labels.cuda())
@@ -148,7 +150,7 @@ def run(config: Config, num_classes: int, subfolder: str) -> None:
     # Testing
     model.eval()
     test_accuracy: float = 0.0
-    for i, (images, labels) in enumerate(test_data_loader):
+    for i, (images, labels) in enumerate(test_loader):
       if torch.cuda.is_available():
         images = Variable(images.cuda())
         labels = Variable(labels.cuda())
