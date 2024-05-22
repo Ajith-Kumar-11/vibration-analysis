@@ -15,7 +15,7 @@ from utility.folder import ensure_folder_exists
 BATCH_SIZE: int = 1  # WARNING: Do not change this value, !=1 is incompatible with the current accuracy calculation
 LEARNING_RATE: float = 0.0001
 WEIGHT_DECAY: float = 0.0001
-NUM_EPOCHS: int = 1
+NUM_EPOCHS: int = 10
 SPLIT_RATIO: float = 0.5  # Train-test split
 
 
