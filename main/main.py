@@ -1,8 +1,7 @@
 import config.config as cfg
 import read.dataset.cwru
 import workflow.cwru
-import cnn.cwru.model_512_7
-import cnn.cwru.model_512_19
+import cnn.cnn as cnn
 
 
 def main() -> None:
@@ -15,8 +14,7 @@ def main() -> None:
 
   # Train CNN model on CWRU FFT spectrograms
   if True:
-    cnn.cwru.model_512_7.run(config)
-    cnn.cwru.model_512_19.run(config)
+    cnn.run(config)
 
 
 if __name__ == "__main__":
