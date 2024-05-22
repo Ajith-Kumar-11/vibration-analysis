@@ -1,3 +1,6 @@
+> [!WARNING]
+> Following method is deprecated in favor of `random_split` from PyTorch utils. This section of code is preserved for documentation and should not be used.
+
 # Split Folders
 This is a utility to move FFT spectrograms into `train`, `val`, and `test` sets.
 
