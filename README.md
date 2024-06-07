@@ -10,7 +10,7 @@ mamba activate vibration
 mamba install python=3.12
 
 # Add dependencies
-mamba install numpy matplotlib polars
+mamba install numpy matplotlib polars scikit-learn
 
 # Add dev dependencies
 mamba install ruff loguru
