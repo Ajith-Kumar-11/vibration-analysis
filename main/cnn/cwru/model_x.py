@@ -17,8 +17,8 @@ from utility.folder import ensure_folder_exists
 
 # Hyperparameters
 BATCH_SIZE: int = 1
-LEARNING_RATE: float = 0.0001
-WEIGHT_DECAY: float = 0.0001
+LEARNING_RATE: float = 0.001
+WEIGHT_DECAY: float = 0.001
 NUM_EPOCHS: int = 10
 SPLIT_RATIO: float = 0.5  # Train-test split
 
