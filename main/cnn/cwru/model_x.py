@@ -1,9 +1,12 @@
+import csv
 import os
 import sys
+import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 from config.config import Config
 from loguru import logger
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 from torch.autograd import Variable
 from torch.optim import Adam
 from torch.utils.data import DataLoader, random_split
@@ -167,3 +170,45 @@ def run(config: Config, num_classes: int, subfolder: str) -> None:
     if test_accuracy > best_accuracy:
       torch.save(model.state_dict(), os.path.join(model_output_folder, "checkpoint.model"))
       best_accuracy = test_accuracy
+
+  # -------- Confusion Matrix --------
+  # Load the best checkpoint for evaluation
+  logger.info("Training done; loading best model to generate confusion matrix")
+  best_checkpoint_path = os.path.join(model_output_folder, "checkpoint.model")
+  model.load_state_dict(torch.load(best_checkpoint_path))
+  model.eval()
+
+  # Initialize lists to hold true and predicted labels
+  all_preds = []
+  all_labels = []
+
+  with torch.no_grad():
+    for images, labels in test_loader:
+      if torch.cuda.is_available():
+        images = Variable(images.cuda())
+        labels = Variable(labels.cuda())
+      outputs = model(images)
+      _, preds = torch.max(outputs.data, 1)
+      all_preds.extend(preds.cpu().numpy())
+      all_labels.extend(labels.cpu().numpy())
+
+  # Compute the confusion matrix
+  cm = confusion_matrix(all_labels, all_preds, labels=list(range(num_classes)))
+  disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
+
+  # Plot confusion matrix
+  fig, ax = plt.subplots(figsize=(10, 10))
+  disp.plot(ax=ax)
+  plt.xticks(rotation=90)
+  plt.savefig(os.path.join(model_output_folder, "confusion_matrix.png"))
+  plt.close(fig)
+
+  # Save the confusion matrix numerically to a CSV file
+  csv_file_path = os.path.join(model_output_folder, "confusion_matrix.csv")
+  with open(csv_file_path, mode="w", newline="") as file:
+    writer = csv.writer(file)
+    writer.writerow([""] + classes)  # Header
+    for i, row in enumerate(cm):
+      writer.writerow([classes[i]] + row.tolist())  # Rows with class labels
+
+  logger.info("[ OK ] Confusion matrix saved to output folder")
