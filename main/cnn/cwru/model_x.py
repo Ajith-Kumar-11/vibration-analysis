@@ -3,6 +3,7 @@ import os
 import sys
 import matplotlib.pyplot as plt
 import torch
+import polars as pl
 import torch.nn as nn
 from config.config import Config
 from loguru import logger
@@ -24,6 +25,11 @@ SPLIT_RATIO: float = 0.5  # Train-test split
 
 def run(config: Config, num_classes: int, subfolder: str) -> None:
   print(f"\nWorking on 512x512 px images, {num_classes} classes")
+
+  # Track the progress of the model
+  loss_list: list[float] = []
+  test_accuracy_list: list[float] = []
+  train_accuracy_list: list[float] = []
 
   # Generate folder to save model
   model_output_folder: str = f"output/model/modelx/{subfolder}"
@@ -162,18 +168,56 @@ def run(config: Config, num_classes: int, subfolder: str) -> None:
       test_accuracy += int(torch.sum(prediction == labels.data))
 
     test_accuracy: float = test_accuracy / test_count
-    logger.info(
-      f"Train Loss: {train_loss} Train: {train_accuracy * 100 / BATCH_SIZE}% Test: {test_accuracy * 100 / BATCH_SIZE}%"
-    )
+    test_accuracy_percentage: float = test_accuracy * 100 / BATCH_SIZE
+    train_accuracy_percentage: float = train_accuracy * 100 / BATCH_SIZE
+    logger.info(f"Train Loss: {train_loss} Train: {train_accuracy_percentage}% Test: {test_accuracy_percentage}%")
+
+    # Log progress
+    loss_list.append(train_loss)
+    train_accuracy_list.append(train_accuracy_percentage)
+    test_accuracy_list.append(test_accuracy_percentage)
 
     # Save/update the best model
     if test_accuracy > best_accuracy:
       torch.save(model.state_dict(), os.path.join(model_output_folder, "checkpoint.model"))
       best_accuracy = test_accuracy
 
+  # -------- Loss and Accuracy Graphs --------
+  logger.info("Plotting accuracy and loss graphs")
+  fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))
+  ax1.plot(test_accuracy_list, label="Test Accuracy")
+  ax1.plot(train_accuracy_list, label="Train Accuracy")
+  ax1.set_title("Accuracy")
+  ax1.set_xlabel("Epoch")
+  ax1.set_ylabel("Accuracy")
+  ax1.legend()
+
+  # Plot loss
+  ax2.plot(loss_list, label="Loss", color="red")
+  ax2.set_title("Loss")
+  ax2.set_xlabel("Epoch")
+  ax2.set_ylabel("Loss")
+  ax2.legend()
+
+  # Display plots
+  plt.tight_layout()
+  plt.savefig(os.path.join(model_output_folder, "accuracy_loss.png"))
+  plt.close(fig)
+
+  # Saving metrics to CSV
+  data = {
+    "Epoch": list(range(1, len(loss_list) + 1)),
+    "Loss": loss_list,
+    "Test Accuracy": test_accuracy_list,
+    "Train Accuracy": train_accuracy_list,
+  }
+
+  df = pl.DataFrame(data)
+  df.write_csv(os.path.join(model_output_folder, "accuracy_loss_metrics.csv"))
+
   # -------- Confusion Matrix --------
   # Load the best checkpoint for evaluation
-  logger.info("Training done; loading best model to generate confusion matrix")
+  logger.info("Loading best model to generate confusion matrix")
   best_checkpoint_path = os.path.join(model_output_folder, "checkpoint.model")
   model.load_state_dict(torch.load(best_checkpoint_path))
   model.eval()
@@ -211,4 +255,4 @@ def run(config: Config, num_classes: int, subfolder: str) -> None:
     for i, row in enumerate(cm):
       writer.writerow([classes[i]] + row.tolist())  # Rows with class labels
 
-  logger.info("[ OK ] Confusion matrix saved to output folder")
+  logger.info("[ OK ] Model training complete\n")
